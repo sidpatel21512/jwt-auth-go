@@ -1,0 +1,41 @@
+version: '3.3'
+
+services:
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27018:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    networks:
+      - new-mongo-network
+    container_name: new-mongo-db
+    volumes:
+      - mongo-data:/data/db
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8082:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+      ME_CONFIG_MONGODB_SERVER: new-mongo-db
+      # ME_CONFIG_MONGODB_URL: mongodb://admin:password@new-mongo-db:27017
+    networks:
+      - new-mongo-network
+    container_name: new-mongo-express
+    depends_on:
+      - mongo
+
+volumes:
+  mongo-data:
+
+networks:
+  new-mongo-network:
+    name: new-mongo-network
+
